@@ -2518,7 +2518,7 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
 pub fn load_custom_client() {
     #[cfg(all(target_os = "windows", feature = "flutter"))]
     {
-        *config::APP_NAME.write().unwrap() = "Orbit Suporte Remoto".to_owned();
+        *config::APP_NAME.write().unwrap() = "OrbitSuporteRemoto".to_owned();
         let mut defaults = config::DEFAULT_SETTINGS.write().unwrap();
         for (key, value) in [
             ("custom-rendezvous-server", "179.197.235.244"),
