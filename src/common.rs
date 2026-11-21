@@ -2516,6 +2516,20 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
 }
 
 pub fn load_custom_client() {
+    #[cfg(all(target_os = "windows", feature = "flutter"))]
+    {
+        *config::APP_NAME.write().unwrap() = "Orbit Suporte Remoto".to_owned();
+        let mut defaults = config::DEFAULT_SETTINGS.write().unwrap();
+        for (key, value) in [
+            ("custom-rendezvous-server", "179.197.235.244"),
+            ("relay-server", "179.197.235.244:21117"),
+            ("key", "xRMIJIT7+FGTjRs2TvnbjnJsyK8rvOZC4wYKRV8TEyE="),
+            ("approve-mode", "click"),
+        ] {
+            defaults.insert(key.to_owned(), value.to_owned());
+        }
+    }
+
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());
