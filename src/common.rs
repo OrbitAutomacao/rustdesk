@@ -2522,6 +2522,7 @@ pub fn load_custom_client() {
         let mut defaults = config::DEFAULT_SETTINGS.write().unwrap();
         for (key, value) in [
             ("custom-rendezvous-server", "179.197.235.244"),
+            ("api-server", "https://suporte.orbitautomacao.com.br"),
             ("relay-server", "179.197.235.244:21117"),
             ("key", "xRMIJIT7+FGTjRs2TvnbjnJsyK8rvOZC4wYKRV8TEyE="),
             ("approve-mode", "click"),
