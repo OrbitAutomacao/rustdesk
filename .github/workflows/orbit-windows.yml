@@ -386,3 +386,30 @@ jobs:
           name: Orbit-Suporte-Remoto-Windows-x64
           path: ./SignOutput/Orbit-Suporte-Remoto-Windows-x64.exe
           if-no-files-found: error
+
+  publish-orbit-release:
+    name: Publicar instalador Orbit
+    needs: build-for-windows-flutter
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Baixar instalador compilado
+        uses: actions/download-artifact@v8
+        with:
+          name: Orbit-Suporte-Remoto-Windows-x64
+          path: release
+
+      - name: Gerar checksum e publicar versao
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cd release
+          sha256sum Orbit-Suporte-Remoto-Windows-x64.exe > SHA256SUMS.txt
+          tag="orbit-v${VERSION}-${GITHUB_RUN_NUMBER}"
+          gh release create "$tag" Orbit-Suporte-Remoto-Windows-x64.exe SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Orbit Suporte Remoto ${VERSION} (build ${GITHUB_RUN_NUMBER})" \
+            --notes "Instalador Windows x64 da Orbit. Confira SHA256SUMS.txt antes de instalar. Este executavel ainda nao possui assinatura digital."
