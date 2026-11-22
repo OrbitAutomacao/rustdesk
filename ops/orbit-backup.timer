@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup diário da Orbit
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+Unit=orbit-backup.service
+
+[Install]
+WantedBy=timers.target

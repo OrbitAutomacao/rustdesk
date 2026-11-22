@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup criptografado da Orbit
+
+[Service]
+Type=oneshot
+ExecStart=/opt/orbit-backups/orbit-backup.sh
