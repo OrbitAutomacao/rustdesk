@@ -1,0 +1,1 @@
+import{s as t}from"../entry/index-DIKydbUK.js";function i(r){return t({url:"/my/peer/list",params:r})}function o(r){return t({url:"/my/peer/claim",method:"post",data:{row_id:r}})}export{o as c,i as l};
