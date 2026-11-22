@@ -1,0 +1,7 @@
+FROM golang:1.23-alpine AS builder
+RUN apk add --no-cache gcc musl-dev
+WORKDIR /src
+COPY . .
+RUN go mod tidy && CGO_ENABLED=1 go build -o /apimain ./cmd/apimain.go
+FROM lejianwen/rustdesk-api:latest
+COPY --from=builder /apimain /app/apimain
