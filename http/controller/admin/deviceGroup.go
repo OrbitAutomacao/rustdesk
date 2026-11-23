@@ -6,7 +6,6 @@ import (
 	"github.com/lejianwen/rustdesk-api/v2/http/request/admin"
 	"github.com/lejianwen/rustdesk-api/v2/http/response"
 	"github.com/lejianwen/rustdesk-api/v2/service"
-	"gorm.io/gorm"
 	"strconv"
 )
 
@@ -28,8 +27,7 @@ func (ct *DeviceGroup) Detail(c *gin.Context) {
 	id := c.Param("id")
 	iid, _ := strconv.Atoi(id)
 	u := service.AllService.GroupService.DeviceGroupInfoById(uint(iid))
-	current := service.AllService.UserService.CurUser(c)
-	if u.Id > 0 && service.AllService.GroupService.CanAccessDeviceGroup(u.Id, current.Id) {
+	if u.Id > 0 {
 		response.Success(c, u)
 		return
 	}
@@ -60,7 +58,6 @@ func (ct *DeviceGroup) Create(c *gin.Context) {
 		return
 	}
 	u := f.ToDeviceGroup()
-	u.OwnerUserId = service.AllService.UserService.CurUser(c).Id
 	err := service.AllService.GroupService.DeviceGroupCreate(u)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -87,10 +84,7 @@ func (ct *DeviceGroup) List(c *gin.Context) {
 		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError")+err.Error())
 		return
 	}
-	current := service.AllService.UserService.CurUser(c)
-	res := service.AllService.GroupService.DeviceGroupList(query.Page, query.PageSize, func(tx *gorm.DB) {
-		service.VisibleDeviceGroups(tx, current.Id)
-	})
+	res := service.AllService.GroupService.DeviceGroupList(query.Page, query.PageSize, nil)
 	response.Success(c, res)
 }
 
@@ -120,17 +114,7 @@ func (ct *DeviceGroup) Update(c *gin.Context) {
 		response.Fail(c, 101, errList[0])
 		return
 	}
-	current := service.AllService.UserService.CurUser(c)
-	existing := service.AllService.GroupService.DeviceGroupInfoById(f.Id)
-	if existing.Id == 0 || !service.AllService.GroupService.CanAccessDeviceGroup(existing.Id, current.Id) {
-		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
-		return
-	}
 	u := f.ToDeviceGroup()
-	u.OwnerUserId = current.Id
-	if existing.Private {
-		u.OwnerUserId = existing.OwnerUserId
-	}
 	err := service.AllService.GroupService.DeviceGroupUpdate(u)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -163,8 +147,7 @@ func (ct *DeviceGroup) Delete(c *gin.Context) {
 		return
 	}
 	u := service.AllService.GroupService.DeviceGroupInfoById(f.Id)
-	current := service.AllService.UserService.CurUser(c)
-	if u.Id > 0 && service.AllService.GroupService.CanAccessDeviceGroup(u.Id, current.Id) {
+	if u.Id > 0 {
 		err := service.AllService.GroupService.DeviceGroupDelete(u)
 		if err == nil {
 			response.Success(c, nil)

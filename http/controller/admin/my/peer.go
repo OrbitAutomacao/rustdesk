@@ -37,7 +37,6 @@ func (ct *Peer) List(c *gin.Context) {
 	}
 	u := service.AllService.UserService.CurUser(c)
 	res := service.AllService.PeerService.List(query.Page, query.PageSize, func(tx *gorm.DB) {
-		service.VisiblePeers(tx, u.Id)
 		if service.AllService.UserService.IsAdmin(u) {
 			tx.Where("(user_id = ? OR user_id = 0)", u.Id)
 		} else {
