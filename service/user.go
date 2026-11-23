@@ -55,7 +55,7 @@ func (us *UserService) InfoByUsernamePassword(username, password string) *model.
 		Logger.Warn("Fallback to local database")
 	}
 	u := &model.User{}
-	DB.Where("username = ?", username).First(u)
+	DB.Where("username = ?", us.formatUsername(username)).First(u)
 	if u.Id == 0 {
 		return u
 	}
