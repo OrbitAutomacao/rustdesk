@@ -75,7 +75,7 @@ func (us *GroupService) CanAccessGroup(id, userId uint) bool {
 
 func (us *GroupService) CanAccessUser(targetId, viewerId uint) bool {
 	if targetId == 0 { return true }
-	target := AllService.UserService.InfoById(targetId)
+	target := (&UserService{}).InfoById(targetId)
 	return target.Id != 0 && us.CanAccessGroup(target.GroupId, viewerId)
 }
 
