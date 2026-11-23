@@ -21,6 +21,9 @@
             <span v-else>{{ T('SharedGroup') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="Visibilidade" align="center">
+          <template #default="{ row }">{{ row.private ? 'Somente minha conta' : 'Todos os administradores' }}</template>
+        </el-table-column>
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center"/>
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center"/>
         <el-table-column :label="T('Actions')" align="center">
@@ -52,6 +55,9 @@
               <span style="font-size: 12px;color: #999">{{ item.note }}</span>
             </el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="Visibilidade">
+          <el-switch v-model="formData.private" active-text="Somente minha conta" inactive-text="Todos os administradores" />
         </el-form-item>
         <el-form-item>
           <el-button @click="formVisible = false">{{ T('Cancel') }}</el-button>
@@ -125,6 +131,7 @@
     id: 0,
     name: '',
     type: 1,
+    private: false,
   })
 
   const toEdit = (row) => {
@@ -132,12 +139,14 @@
     formData.id = row.id
     formData.name = row.name
     formData.type = row.type
+    formData.private = row.private
   }
   const toAdd = () => {
     formVisible.value = true
     formData.id = 0
     formData.name = ''
     formData.type = 1
+    formData.private = false
   }
   const submit = async () => {
     const api = formData.id ? update : create
