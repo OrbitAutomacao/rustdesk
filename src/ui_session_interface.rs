@@ -1977,7 +1977,19 @@ pub async fn io_loop<T: InvokeUiSession>(handler: Session<T>, round: u32) {
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     let (sender, mut receiver) = mpsc::unbounded_channel::<Data>();
     *handler.sender.write().unwrap() = Some(sender.clone());
-    let token = LocalConfig::get_option("access_token");
+    // The Orbit account token authenticates the HTTP API, not the OSS hbbs
+    // rendezvous server. Passing it to hbbs changes the connection handshake
+    // when a user logs in and can prevent an otherwise working peer session.
+    // Keep the token for other servers, which may implement token auth.
+    let orbit_oss_server = Config::get_rendezvous_server()
+        .split(':')
+        .next()
+        == Some("179.197.235.244");
+    let token = if orbit_oss_server {
+        String::new()
+    } else {
+        LocalConfig::get_option("access_token")
+    };
     let key = crate::get_key(false).await;
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     if handler.is_port_forward() {
