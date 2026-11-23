@@ -8,12 +8,12 @@ type UserForm struct {
 	Id       uint   `json:"id"`
 	Username string `json:"username" validate:"required,gte=2,lte=32"`
 	Email    string `json:"email"` //validate:"required,email" email不强制
-	//Password string           `json:"password" validate:"required,gte=4,lte=20"`
+	Password string `json:"password"`
 	Nickname string           `json:"nickname"`
 	Avatar   string           `json:"avatar"`
 	GroupId  uint             `json:"group_id" validate:"required"`
 	IsAdmin  *bool            `json:"is_admin" `
-	Status   model.StatusCode `json:"status" validate:"required,gte=0"`
+	Status   model.StatusCode `json:"status" validate:"required,gte=1,lte=2"`
 	Remark   string           `json:"remark"`
 }
 
@@ -58,7 +58,7 @@ type UserPasswordForm struct {
 }
 
 type ChangeCurPasswordForm struct {
-	OldPassword string `json:"old_password" validate:"required,gte=4,lte=32"`
+	OldPassword string `json:"old_password" validate:"omitempty,gte=4,lte=32"`
 	NewPassword string `json:"new_password" validate:"required,gte=4,lte=32"`
 }
 type GroupUsersQuery struct {

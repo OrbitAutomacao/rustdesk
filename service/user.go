@@ -174,10 +174,16 @@ func (us *UserService) Create(u *model.User) error {
 		return errors.New("UsernameExists")
 	}
 	u.Username = us.formatUsername(u.Username)
+	if u.IsAdmin == nil {
+		isAdmin := false
+		u.IsAdmin = &isAdmin
+	}
 	var err error
-	u.Password, err = utils.EncryptPassword(u.Password)
-	if err != nil {
-		return err
+	if u.Password != "" {
+		u.Password, err = utils.EncryptPassword(u.Password)
+		if err != nil {
+			return err
+		}
 	}
 	res := DB.Create(u).Error
 	return res
@@ -408,7 +414,12 @@ func (us *UserService) IsPasswordEmptyById(id uint) bool {
 	if DB.Where("id = ?", id).First(u).Error != nil {
 		return false
 	}
-	return u.Password == ""
+	if u.Password == "" {
+		return true
+	}
+	// Accounts created before the empty-password fix have a bcrypt hash of "".
+	ok, _, _ := utils.VerifyPassword(u.Password, "")
+	return ok
 }
 
 // IsPasswordEmptyByUsername 根据用户id判断密码是否为空，主要用于第三方登录的自动注册

@@ -62,6 +62,11 @@ func (ct *User) Create(c *gin.Context) {
 		return
 	}
 	u := f.ToUser()
+	if len(f.Password) < 4 || len(f.Password) > 32 {
+		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError"))
+		return
+	}
+	u.Password = f.Password
 	err := service.AllService.UserService.Create(u)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -318,6 +323,10 @@ func (ct *User) Register(c *gin.Context) {
 	errList := global.Validator.ValidStruct(c, f)
 	if len(errList) > 0 {
 		response.Fail(c, 101, errList[0])
+		return
+	}
+	if f.Password != f.ConfirmPassword {
+		response.Fail(c, 101, "As senhas não coincidem")
 		return
 	}
 	regStatus := model.StatusCode(global.Config.App.RegisterStatus)
