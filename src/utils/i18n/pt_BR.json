@@ -1,0 +1,616 @@
+{
+  "Login": {
+    "One": "Entrar"
+  },
+  "Logout": {
+    "One": "Sair"
+  },
+  "Register": {
+    "One": "Cadastrar"
+  },
+  "Confirm": {
+    "One": "Confirmar"
+  },
+  "Username": {
+    "One": "Usuário"
+  },
+  "Password": {
+    "One": "Senha"
+  },
+  "LoginSuccess": {
+    "One": "Acesso realizado com sucesso"
+  },
+  "ForgotPassword": {
+    "One": "Esqueceu a senha?"
+  },
+  "ResetPassword": {
+    "One": "Redefinir senha"
+  },
+  "ChangePassword": {
+    "One": "Alterar senha"
+  },
+  "Userinfo": {
+    "One": "Dados do usuário"
+  },
+  "ParamRequired": {
+    "One": "{param} é obrigatório"
+  },
+  "HasBind": {
+    "One": "Vinculado"
+  },
+  "NoBind": {
+    "One": "Não vinculado"
+  },
+  "UnBind": {
+    "One": "Desvincular"
+  },
+  "ToBind": {
+    "One": "Vincular"
+  },
+  "Confirm?": {
+    "One": "Confirmar {param}?"
+  },
+  "Cancel": {
+    "One": "Cancelar"
+  },
+  "Platform": {
+    "One": "Plataforma"
+  },
+  "Status": {
+    "One": "Status"
+  },
+  "Actions": {
+    "One": "Ações"
+  },
+  "Filter": {
+    "One": "Filtrar"
+  },
+  "Add": {
+    "One": "Adicionar"
+  },
+  "Hostname": {
+    "One": "Nome do computador"
+  },
+  "Alias": {
+    "One": "Apelido"
+  },
+  "Hash": {
+    "One": "Hash"
+  },
+  "Tags": {
+    "One": "Etiquetas"
+  },
+  "Edit": {
+    "One": "Editar"
+  },
+  "Delete": {
+    "One": "Excluir"
+  },
+  "Create": {
+    "One": "Criar"
+  },
+  "Update": {
+    "One": "Atualizar"
+  },
+  "LoginName": {
+    "One": "Nome de acesso"
+  },
+  "Submit": {
+    "One": "Enviar"
+  },
+  "OperationSuccess": {
+    "One": "Operação concluída"
+  },
+  "Owner": {
+    "One": "Responsável"
+  },
+  "Name": {
+    "One": "Nome"
+  },
+  "Color": {
+    "One": "Cor"
+  },
+  "CreatedAt": {
+    "One": "Criado em"
+  },
+  "UpdatedAt": {
+    "One": "Atualizado em"
+  },
+  "Memory": {
+    "One": "Memória"
+  },
+  "Os": {
+    "One": "Sistema operacional"
+  },
+  "Uuid": {
+    "One": "UUID"
+  },
+  "Version": {
+    "One": "Versão"
+  },
+  "Type": {
+    "One": "Tipo"
+  },
+  "Group": {
+    "One": "Grupo"
+  },
+  "CommonGroup": {
+    "One": "Grupo comum"
+  },
+  "CommonGroupNote": {
+    "One": "Somente administradores podem ver os integrantes e dispositivos deste grupo"
+  },
+  "SharedGroup": {
+    "One": "Grupo compartilhado"
+  },
+  "SharedGroupNote": {
+    "One": "Todos os usuários podem ver os integrantes e dispositivos deste grupo"
+  },
+  "Nickname": {
+    "One": "Apelido"
+  },
+  "UserTags": {
+    "One": "Etiquetas do usuário"
+  },
+  "UserAddressBook": {
+    "One": "Catálogo do usuário"
+  },
+  "IsAdmin": {
+    "One": "Administrador"
+  },
+  "PleaseInputNewPassword": {
+    "One": "Digite a nova senha"
+  },
+  "AutoRegister": {
+    "One": "Cadastro automático"
+  },
+  "AutoRegisterNote": {
+    "One": "Ao entrar por OAuth sem vincular uma conta, o usuário será cadastrado automaticamente"
+  },
+  "ThirdName": {
+    "One": "Nome do provedor"
+  },
+  "Close": {
+    "One": "Fechar"
+  },
+  "OauthBinding": {
+    "One": "Você está autorizando a vinculação"
+  },
+  "OauthLogining": {
+    "One": "Você está autorizando o acesso"
+  },
+  "OauthCloseNote": {
+    "One": "Se você não solicitou esta autorização, feche a página"
+  },
+  "OperationSuccessAndCloseAfter3Seconds": {
+    "One": "Operação concluída. A página fechará em 3 segundos"
+  },
+  "ConfirmOauth": {
+    "One": "Confirmar OAuth"
+  },
+  "Device": {
+    "One": "Dispositivo"
+  },
+  "ChangeLang": {
+    "One": "Alterar idioma"
+  },
+  "My": {
+    "One": "Minha conta"
+  },
+  "Info": {
+    "One": "Informações"
+  },
+  "AddressBooks": {
+    "One": "Catálogos"
+  },
+  "System": {
+    "One": "Administração"
+  },
+  "PeerManage": {
+    "One": "Dispositivos"
+  },
+  "AddressBookManage": {
+    "One": "Catálogos"
+  },
+  "GroupManage": {
+    "One": "Grupos"
+  },
+  "UserManage": {
+    "One": "Usuários"
+  },
+  "UserAdd": {
+    "One": "Adicionar usuário"
+  },
+  "UserEdit": {
+    "One": "Editar usuário"
+  },
+  "TagsManage": {
+    "One": "Etiquetas"
+  },
+  "OauthManage": {
+    "One": "OAuth"
+  },
+  "LoginLog": {
+    "One": "Histórico de acessos"
+  },
+  "LastOnlineTime": {
+    "One": "Última conexão"
+  },
+  "JustNow": {
+    "One": "Agora mesmo"
+  },
+  "MinutesAgo": {
+    "Other": "há {param} minutos",
+    "One": "há {param} minuto"
+  },
+  "HoursAgo": {
+    "Other": "há {param} horas",
+    "One": "há {param} hora"
+  },
+  "DaysAgo": {
+    "Other": "há {param} dias",
+    "One": "há {param} dia"
+  },
+  "MonthsAgo": {
+    "Other": "há {param} meses",
+    "One": "há {param} mês"
+  },
+  "YearsAgo": {
+    "Other": "há {param} anos",
+    "One": "há {param} ano"
+  },
+  "MinutesLess": {
+    "Other": "menos de {param} minutos",
+    "One": "menos de {param} minuto"
+  },
+  "HoursLess": {
+    "Other": "menos de {param} horas",
+    "One": "menos de {param} hora"
+  },
+  "DaysLess": {
+    "Other": "menos de {param} dias",
+    "One": "menos de {param} dia"
+  },
+  "Export": {
+    "One": "Exportar"
+  },
+  "AddToAddressBook": {
+    "One": "Adicionar ao catálogo"
+  },
+  "BatchDelete": {
+    "One": "Excluir selecionados"
+  },
+  "PleaseSelectData": {
+    "One": "Selecione pelo menos um item"
+  },
+  "PasswordType": {
+    "One": "Tipo de senha"
+  },
+  "OncePassword": {
+    "One": "Senha de uso único"
+  },
+  "FixedPassword": {
+    "One": "Senha permanente"
+  },
+  "FixedPasswordWarning": {
+    "One": "Senhas permanentes podem ser expostas. Use com cuidado; prefira senhas de uso único quando possível"
+  },
+  "ExpireTime": {
+    "One": "Validade"
+  },
+  "ShareByWebClient": {
+    "One": "Compartilhar pelo cliente web"
+  },
+  "Minutes": {
+    "Other": "{param} minutos",
+    "One": "{param} minuto"
+  },
+  "Hours": {
+    "Other": "{param} horas",
+    "One": "{param} hora"
+  },
+  "Days": {
+    "Other": "{param} dias",
+    "One": "{param} dia"
+  },
+  "Weeks": {
+    "Other": "{param} semanas",
+    "One": "{param} semana"
+  },
+  "Months": {
+    "Other": "{param} meses",
+    "One": "{param} mês"
+  },
+  "Forever": {
+    "One": "Sem prazo"
+  },
+  "Error": {
+    "One": "Erro"
+  },
+  "IDNotExist": {
+    "One": "ID inexistente"
+  },
+  "RemoteDesktopOffline": {
+    "One": "Computador remoto offline"
+  },
+  "KeyMismatch": {
+    "One": "Chave incompatível"
+  },
+  "KeyOveruse": {
+    "One": "Limite de uso da chave excedido"
+  },
+  "Link": {
+    "One": "Link"
+  },
+  "CopySuccess": {
+    "One": "Copiado"
+  },
+  "CopyFailed": {
+    "One": "Não foi possível copiar"
+  },
+  "Timeout": {
+    "One": "Tempo esgotado"
+  },
+  "AuditConnLog": {
+    "One": "Registro de conexões"
+  },
+  "Peer": {
+    "One": "Dispositivo",
+    "Other": "Peers"
+  },
+  "FromPeer": {
+    "One": "Dispositivo de origem"
+  },
+  "FromName": {
+    "One": "Nome de origem"
+  },
+  "CloseTime": {
+    "One": "Encerrado em"
+  },
+  "AuditFileLog": {
+    "One": "Registro de arquivos"
+  },
+  "Common": {
+    "One": "Comum"
+  },
+  "File": {
+    "One": "Arquivo"
+  },
+  "Num": {
+    "One": "Quantidade"
+  },
+  "Ip": {
+    "One": "IP"
+  },
+  "FileName": {
+    "One": "Nome do arquivo"
+  },
+  "FileInfo": {
+    "One": "Informações do arquivo"
+  },
+  "Path": {
+    "One": "Caminho"
+  },
+  "IndexNum": {
+    "One": "Número"
+  },
+  "ToRemote": {
+    "One": "Para o remoto"
+  },
+  "ToLocal": {
+    "One": "Para o local"
+  },
+  "AddressBookName": {
+    "One": "Nome do catálogo"
+  },
+  "AddRule": {
+    "One": "Adicionar regra"
+  },
+  "ShareRules": {
+    "One": "Regras de compartilhamento"
+  },
+  "Rule": {
+    "One": "Regra"
+  },
+  "Read": {
+    "One": "Leitura"
+  },
+  "ReadWrite": {
+    "One": "Leitura e escrita"
+  },
+  "FullControl": {
+    "One": "Controle total"
+  },
+  "ShareTo": {
+    "One": "Compartilhar com"
+  },
+  "MyAddressBook": {
+    "One": "Meu catálogo"
+  },
+  "AddressBook": {
+    "One": "Catálogo"
+  },
+  "AddressBookNameManage": {
+    "One": "Nomes de catálogos"
+  },
+  "MyAddressBookTips": {
+    "One": "Meu catálogo é o padrão do sistema e não pode ser alterado ou excluído"
+  },
+  "LastOnlineIp": {
+    "One": "IP da última conexão"
+  },
+  "OldPassword": {
+    "One": "Senha atual"
+  },
+  "NewPasswordEqualOldPassword": {
+    "One": "A nova senha deve ser diferente da atual"
+  },
+  "NewPassword": {
+    "One": "Nova senha"
+  },
+  "ConfirmPassword": {
+    "One": "Confirme a senha"
+  },
+  "PasswordNotMatchConfirmPassword": {
+    "One": "As senhas não coincidem"
+  },
+  "ToLogin": {
+    "One": "Ir para o login"
+  },
+  "UserToken": {
+    "One": "Tokens de acesso"
+  },
+  "BatchAddToAB": {
+    "One": "Adicionar selecionados ao catálogo"
+  },
+  "BatchEditTags": {
+    "One": "Editar etiquetas dos selecionados"
+  },
+  "User": {
+    "One": "Usuário"
+  },
+  "ShareRecord": {
+    "One": "Compartilhamentos"
+  },
+  "Second": {
+    "One": "Segundo"
+  },
+  "Captcha": {
+    "One": "Código de verificação"
+  },
+  "ServerCmd": {
+    "One": "Comandos do servidor"
+  },
+  "Simple": {
+    "One": "Simples"
+  },
+  "Advanced": {
+    "One": "Avançado"
+  },
+  "Available": {
+    "One": "Disponível"
+  },
+  "NotAvailable": {
+    "One": "Indisponível"
+  },
+  "ServerCmdTips": {
+    "One": "Este recurso é experimental. A API, o hbbs e o hbbr devem usar o mesmo endereço local. Consulte a {wiki} para mais informações"
+  },
+  "Refresh": {
+    "One": "Atualizar"
+  },
+  "Save": {
+    "One": "Salvar"
+  },
+  "SendCustom": {
+    "One": "Enviar personalizado"
+  },
+  "Send": {
+    "One": "Enviar"
+  },
+  "SendCmd": {
+    "One": "Enviar comando"
+  },
+  "Result": {
+    "One": "Resultado"
+  },
+  "DeviceGroupManage": {
+    "One": "Grupos de dispositivos"
+  },
+  "Drop file here or click to upload": {
+    "One": "Arraste o arquivo aqui ou clique para enviar"
+  },
+  "Please upload csv file": {
+    "One": "Envie um arquivo CSV"
+  },
+  "Columns": {
+    "One": "Colunas"
+  },
+  "You can reference export file": {
+    "One": "Use o arquivo exportado como modelo"
+  },
+  "Remark": {
+    "One": "Observação"
+  },
+  "MyPeer": {
+    "One": "Meus dispositivos"
+  },
+  "Token": {
+    "One": "Token"
+  },
+  "AuditConn": {
+    "One": "Conexões"
+  },
+  "AuditFile": {
+    "One": "Arquivos"
+  },
+  "Bind": {
+    "One": "Vincular"
+  },
+  "PkceMethod": {
+    "One": "Método PKCE"
+  },
+  "Op": {
+    "One": "Operação"
+  },
+  "Your IdP Name": {
+    "One": "Nome do seu provedor de identidade"
+  },
+  "PkceEnable": {
+    "One": "Ativar PKCE"
+  },
+  "Success": {
+    "One": "Concluído"
+  },
+  "or login in with": {
+    "One": "ou entre com"
+  },
+  "Email": {
+    "One": "E-mail"
+  },
+  "For OIDC login without a password, enter any 4-20 letters": {
+    "One": "Para entrar por OIDC sem senha, digite de 4 a 20 letras"
+  },
+  "Check your IdP docs, without": {
+    "One": "Consulte a documentação do provedor, sem"
+  },
+  "IdP": {
+    "One": "Provedor de identidade"
+  },
+  "Import": {
+    "One": "Importar"
+  },
+  "More": {
+    "One": "Mais"
+  },
+  "View": {
+    "One": "Ver"
+  },
+  "Id": {
+    "One": "ID"
+  },
+  "Information": {
+    "One": "Informações"
+  },
+  "Size": {
+    "One": "Tamanho"
+  },
+  "Optional, default is": {
+    "One": "Opcional. O padrão é"
+  },
+  "WebClient": {
+    "One": "Cliente web"
+  },
+  "ColumnSetting": {
+    "One": "Configurar colunas"
+  },
+  "RdpUsername": {
+    "One": "Usuário RDP"
+  },
+  "MultipleIps": {
+    "One": "Separe vários IPs com |"
+  },
+  "DeleteAllHint": {
+    "One": "Para apagar todos, digite"
+  }
+}

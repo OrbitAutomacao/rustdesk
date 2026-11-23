@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c2440">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Orbit Suporte">
+  <link rel="manifest" href="/_admin/webclient-shell/manifest.webmanifest">
+  <meta name="description" content="Acesso remoto pelo navegador da Orbit Automação.">
+  <title>Cliente web | Orbit Suporte Remoto</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, "Segoe UI", Arial, sans-serif; color: #132b49; background: #eef3f8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; }
+    button, a { font: inherit; }
+    .shell { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+    .topbar { min-height: 76px; padding: 12px clamp(18px, 3vw, 40px); display: flex; align-items: center; justify-content: space-between; gap: 18px; background: #fff; border-bottom: 1px solid #dce6f0; box-shadow: 0 2px 16px #153b6110; position: relative; z-index: 2; }
+    .brand { display: flex; align-items: center; min-width: 0; gap: 16px; text-decoration: none; color: inherit; }
+    .brand img { width: 108px; height: auto; object-fit: contain; flex: none; }
+    .brand-divider { width: 1px; height: 32px; background: #d9e4ee; flex: none; }
+    .brand-name { font-size: 15px; font-weight: 750; letter-spacing: -.02em; white-space: nowrap; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .mode { display: inline-flex; align-items: center; gap: 7px; color: #52708b; font-size: 12px; font-weight: 650; white-space: nowrap; }
+    .mode::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #17b58b; box-shadow: 0 0 0 3px #17b58b23; }
+    .back { border: 1px solid #d6e3ee; color: #164e78; background: #f8fbfe; border-radius: 10px; padding: 10px 13px; text-decoration: none; font-size: 13px; font-weight: 700; white-space: nowrap; transition: background .15s, border-color .15s; }
+    .back:hover, .back:focus-visible { background: #eaf5fb; border-color: #8dc8e4; }
+    .workspace { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 22px; width: 100%; max-width: 1800px; flex: 1; min-height: 0; padding: 24px clamp(18px, 3vw, 40px) 28px; margin: 0 auto; }
+    .guide { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+    .intro { padding: 28px 26px; color: #fff; background: linear-gradient(155deg, #0d3358 0%, #08223d 73%); border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 16px 36px #0b315122; }
+    .intro::after { content: ""; position: absolute; width: 190px; height: 190px; border: 1px solid #ffffff20; border-radius: 50%; right: -95px; top: -80px; box-shadow: 0 0 0 33px #ffffff08, 0 0 0 68px #ffffff05; pointer-events: none; }
+    .eyebrow { display: block; color: #83d5f2; font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 12px; }
+    h1 { font-size: clamp(24px, 2.1vw, 31px); line-height: 1.16; letter-spacing: -.04em; margin: 0 0 12px; max-width: 240px; }
+    .intro p { font-size: 13px; line-height: 1.6; color: #c8d9e8; margin: 0; position: relative; }
+    .steps { background: #fff; border: 1px solid #dce7f0; border-radius: 18px; padding: 22px 22px 17px; box-shadow: 0 7px 20px #1439550a; }
+    .steps h2 { margin: 0 0 18px; font-size: 14px; letter-spacing: -.01em; }
+    .step { display: grid; grid-template-columns: 29px 1fr; column-gap: 11px; margin-bottom: 17px; }
+    .step:last-child { margin-bottom: 0; }
+    .number { width: 28px; height: 28px; background: #e9f6fc; color: #0788bb; border-radius: 9px; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+    .step strong { display: block; font-size: 12px; margin: 1px 0 4px; }
+    .step span:last-child { display: block; color: #637b90; font-size: 12px; line-height: 1.45; }
+    .hint { border: 1px solid #cbe8f4; background: #f1faff; border-radius: 14px; padding: 15px 17px; color: #315a73; font-size: 12px; line-height: 1.5; }
+    .hint strong { color: #0d6c95; }
+    .client-card { min-width: 0; min-height: 600px; display: flex; flex-direction: column; background: #fff; border: 1px solid #dce7f0; border-radius: 20px; overflow: hidden; box-shadow: 0 12px 32px #14395513; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 17px 20px; border-bottom: 1px solid #e3ebf2; }
+    .card-head h2 { margin: 0; font-size: 15px; letter-spacing: -.02em; }
+    .card-head p { margin: 3px 0 0; color: #70879a; font-size: 12px; }
+    .beta { border-radius: 999px; background: #e9f6fb; color: #087fac; padding: 6px 10px; font-size: 11px; font-weight: 750; white-space: nowrap; }
+    .screen-tools { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .screen-tools button { border: 1px solid #cddde9; background: #f4f9fc; color: #164e78; border-radius: 8px; min-width: 34px; min-height: 34px; padding: 5px 9px; cursor: pointer; font-size: 13px; font-weight: 700; }
+    .screen-tools button:hover, .screen-tools button:focus-visible { background: #e3f3fb; border-color: #76bfe0; }
+    .screen-tools output { min-width: 44px; text-align: center; color: #315a73; font-size: 12px; font-weight: 700; }
+    .client-viewport { position: relative; flex: 1; min-height: 540px; overflow: hidden; background: #f1f4f7; --client-scale: 1; }
+    .client-frame { border: 0; display: block; width: calc(100% / var(--client-scale)); height: calc(100% / var(--client-scale)); min-height: calc(540px / var(--client-scale)); background: #f1f4f7; transform: scale(var(--client-scale)); transform-origin: top left; }
+    body.client-expanded { overflow: hidden; }
+    .client-card.is-expanded, .client-card:fullscreen { position: fixed; inset: 0; z-index: 9999; width: 100vw; height: 100vh; height: 100dvh; min-height: 0; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+    .client-card.is-expanded .client-viewport, .client-card:fullscreen .client-viewport { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; }
+    .client-card.is-expanded .client-frame, .client-card:fullscreen .client-frame { position: absolute; top: 0; left: 0; min-height: 0; }
+    .client-card.is-expanded .card-head, .client-card:fullscreen .card-head { position: absolute; z-index: 2; top: max(8px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); width: auto; padding: 6px; border: 0; border-radius: 12px; background: #09253ce6; box-shadow: 0 4px 18px #0004; }
+    .client-card.is-expanded .card-head > div:first-child, .client-card:fullscreen .card-head > div:first-child { display: none; }
+    .client-card.is-expanded .screen-tools, .client-card:fullscreen .screen-tools { width: auto; }
+    .client-card.is-expanded .screen-tools output, .client-card:fullscreen .screen-tools output { color: #fff; }
+
+    .footer { color: #7b90a3; font-size: 11px; text-align: center; padding: 0 20px 15px; }
+    @media (max-width: 900px) { .workspace { grid-template-columns: 250px minmax(0, 1fr); gap: 16px; padding: 16px; } .intro { padding: 23px 21px; } .steps { padding: 20px 18px; } }
+    @media (max-width: 700px) { .topbar { min-height: 66px; padding: 10px 14px; } .brand { gap: 10px; } .brand img { width: 78px; } .brand-divider { height: 26px; } .brand-name { font-size: 12px; } .mode { display: none; } .back { padding: 8px 9px; font-size: 11px; } .workspace { display: flex; flex-direction: column; padding: 13px; gap: 13px; } .guide { gap: 12px; } .intro { padding: 18px 20px; border-radius: 15px; } .intro h1 { font-size: 21px; margin-bottom: 7px; } .intro p { font-size: 12px; } .steps { display: none; } .hint { padding: 11px 13px; } .client-card { border-radius: 15px; min-height: 630px; } .client-viewport { min-height: 560px; } .client-frame { min-height: calc(560px / var(--client-scale)); } .card-head { padding: 13px 15px; flex-wrap: wrap; } .screen-tools { width: 100%; justify-content: flex-start; } .footer { padding-bottom: 12px; } }
+    @media (max-width: 380px) { .brand-name { display: none; } .brand-divider { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/_admin/#/user/peer" aria-label="Voltar aos dispositivos no painel Orbit">
+        <img src="data:image/webp;base64,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" alt="Orbit Automação">
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-name">Suporte Remoto</span>
+      </a>
+      <div class="top-actions"><span class="mode">Acesso pelo navegador</span><a class="back" href="/_admin/#/user/peer">Voltar ao painel</a></div>
+    </header>
+    <main class="workspace">
+      <aside class="guide" aria-label="Orientações de acesso">
+        <section class="intro"><span class="eyebrow">Orbit Automação</span><h1>Conecte-se de onde estiver.</h1><p>Use o cliente web para acessar um dispositivo pelo navegador.</p></section>
+        <section class="steps"><h2>Como conectar</h2>
+          <div class="step"><span class="number">01</span><div><strong>Localize o ID</strong><span>Encontre o número do dispositivo no painel ou no aplicativo instalado.</span></div></div>
+          <div class="step"><span class="number">02</span><div><strong>Informe no cliente</strong><span>Digite o ID no campo “Remote ID” e clique na seta.</span></div></div>
+          <div class="step"><span class="number">03</span><div><strong>Autorize o acesso</strong><span>Conclua a autenticação solicitada pelo dispositivo remoto.</span></div></div>
+        </section>
+        <div class="hint"><strong>Dica:</strong> ao abrir pelo botão “Cliente web” do painel, o ID do dispositivo aparece em uma mensagem para facilitar a conexão.</div>
+      </aside>
+      <section class="client-card" aria-label="Cliente web de acesso remoto">
+        <div class="card-head"><div><h2>Área de conexão</h2><p>Informe o ID remoto no campo abaixo.</p></div>
+          <div class="screen-tools" aria-label="Tamanho da tela">
+            <button id="zoom-out" type="button" aria-label="Diminuir tela">−</button>
+            <output id="zoom-value" aria-live="polite">100%</output>
+            <button id="zoom-in" type="button" aria-label="Ampliar tela">+</button>
+            <button id="zoom-reset" type="button" aria-label="Restaurar tamanho">Ajustar</button>
+            <button id="fullscreen" type="button">Tela cheia</button>
+          </div>
+        </div>
+        <div class="client-viewport" id="client-viewport"><iframe class="client-frame" src="/webclient/?orbit=20261122#/" title="Cliente web de acesso remoto" allow="clipboard-read; clipboard-write; fullscreen" referrerpolicy="same-origin"></iframe></div>
+      </section>
+    </main>
+    <footer class="footer">Orbit Automação · Suporte Remoto</footer>
+  </div>
+  <script>
+    const viewport = document.getElementById('client-viewport');
+    const value = document.getElementById('zoom-value');
+    const card = document.querySelector('.client-card');
+    let scale = 1;
+    function setScale(next) {
+      scale = Math.min(1.5, Math.max(0.5, Math.round(next * 10) / 10));
+      viewport.style.setProperty('--client-scale', scale);
+      value.textContent = `${Math.round(scale * 100)}%`;
+    }
+    document.getElementById('zoom-out').addEventListener('click', () => setScale(scale - 0.1));
+    document.getElementById('zoom-in').addEventListener('click', () => setScale(scale + 0.1));
+    document.getElementById('zoom-reset').addEventListener('click', () => setScale(1));
+    const fullscreenButton = document.getElementById('fullscreen');
+    function setExpanded(expanded) {
+      card.classList.toggle('is-expanded', expanded);
+      document.body.classList.toggle('client-expanded', expanded);
+      fullscreenButton.textContent = expanded ? 'Sair da tela cheia' : 'Tela cheia';
+      fullscreenButton.setAttribute('aria-pressed', String(expanded));
+    }
+    fullscreenButton.addEventListener('click', async () => {
+      if (card.classList.contains('is-expanded')) {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        setExpanded(false);
+        return;
+      }
+      setExpanded(true);
+      if (card.requestFullscreen) {
+        try { await card.requestFullscreen(); } catch (_) { /* Safari móvel usa o modo expandido. */ }
+      }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) setExpanded(false);
+    });
+  </script>
+</body>
+</html>

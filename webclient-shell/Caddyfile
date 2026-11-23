@@ -1,0 +1,50 @@
+suporte.orbitautomacao.com.br {
+    @webclientPage {
+        path /webclient/
+        header Sec-Fetch-Dest document
+    }
+
+    handle @webclientPage {
+        root * /srv/orbit-admin/webclient-shell
+        rewrite * /index.html
+        header Cache-Control "no-store"
+        file_server
+    }
+
+    @webclientFrame {
+        path /webclient/
+        header Sec-Fetch-Dest iframe
+    }
+
+    handle @webclientFrame {
+        root * /srv/orbit-admin/webclient-shell
+        rewrite * /core.html
+        header Cache-Control "no-store"
+        file_server
+    }
+
+    handle /webclient-shim.js {
+        root * /srv/orbit-admin/webclient-shell
+        rewrite * /ws-shim.js
+        header Cache-Control "no-store"
+        file_server
+    }
+
+    handle /ws/id {
+        reverse_proxy 127.0.0.1:21118
+    }
+
+    handle /ws/relay {
+        reverse_proxy 127.0.0.1:21119
+    }
+
+    handle_path /_admin/* {
+        root * /srv/orbit-admin
+        try_files {path} /index.html
+        file_server
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:21114
+    }
+}

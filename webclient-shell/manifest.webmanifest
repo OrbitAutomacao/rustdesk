@@ -1,0 +1,9 @@
+{
+  "name": "Orbit Suporte Remoto",
+  "short_name": "Orbit Suporte",
+  "start_url": "/webclient/",
+  "scope": "/webclient/",
+  "display": "standalone",
+  "background_color": "#eef3f8",
+  "theme_color": "#0c2440"
+}
