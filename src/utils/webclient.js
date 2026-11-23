@@ -11,11 +11,21 @@ const app = useAppStore()
 
 export const toWebClientLink = (row) => {
   const url = new URL('/webclient/', app.setting.rustdeskConfig.api_server || window.location.origin)
+  if (row.id) url.hash = `/?id=${encodeURIComponent(row.id)}`
   window.open(url.toString(), '_blank', 'noopener,noreferrer')
-  if (row.id) {
-    navigator.clipboard?.writeText(String(row.id)).catch(() => {})
-    ElMessageBox.alert(`Digite o ID ${row.id} no campo Remote ID do cliente web.`, 'Cliente web')
+}
+
+export function rememberedWebPasswordHash (id) {
+  let peer
+  try {
+    peer = JSON.parse(localStorage.getItem('peers') || '{}')[id]
+  } catch (_) {
+    return null
   }
+  if (!peer?.remember || !peer.password) return null
+  const values = String(peer.password).split(',').map(Number)
+  if (values.length !== 32 || values.some(value => !Number.isInteger(value) || value < 0 || value > 255)) return null
+  return btoa(String.fromCharCode(...values))
 }
 
 export async function getPeerSlat (id) {

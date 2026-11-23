@@ -6,6 +6,7 @@ import { T } from '@/utils/i18n'
 import { useRepositories as useCollectionRepositories } from '@/views/address_book/collection'
 import { useRepositories as useTagRepositories } from '@/views/tag/index'
 import { simpleData } from '@/api/peer'
+import { rememberedWebPasswordHash } from '@/utils/webclient'
 
 const apis = {
   admin: { list: admin_list, remove: admin_remove, update: admin_update, create: admin_create },
@@ -163,6 +164,18 @@ export function useRepositories (api_type = 'my') {
       getList()
     }
   }
+  const saveRememberedPassword = async (row) => {
+    const hash = rememberedWebPasswordHash(row.id)
+    if (!hash) {
+      ElMessage.info('Abra Web, conecte à máquina e marque “Lembrar senha”. Depois volte aqui para salvar.')
+      return
+    }
+    const res = await apis[api_type].update({ ...row, hash }).catch(_ => false)
+    if (res) {
+      ElMessage.success('Senha lembrada sincronizada com o catálogo.')
+      getList()
+    }
+  }
 
   const changeQueryUser = async (val) => {
     tagListRes.list = []
@@ -229,6 +242,7 @@ export function useRepositories (api_type = 'my') {
     toEdit,
     toAdd,
     submit,
+    saveRememberedPassword,
     getCollectionListForUpdate,
     collectionListResForUpdate,
     changeUserForUpdate,

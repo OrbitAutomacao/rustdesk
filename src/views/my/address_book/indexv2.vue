@@ -64,11 +64,12 @@
           <!--        <el-table-column prop="created_at" label="创建时间" align="center"/>-->
           <!--        <el-table-column prop="updated_at" label="更新时间" align="center"/>-->
           <el-table-column prop="alias" :label="T('Alias')" align="center" width="150"/>
-          <el-table-column prop="hash" :label="T('Hash')" align="center" width="150" show-overflow-tooltip/>
+          <el-table-column label="Senha salva" align="center" width="120"><template #default="{row}">{{ row.hash ? 'Sim' : 'Não' }}</template></el-table-column>
           <el-table-column :label="T('Actions')" align="center" class-name="table-actions" width="600" fixed="right">
             <template #default="{row}">
               <el-button type="success" @click="connectByClient(row.id)">Abrir App</el-button>
               <el-button v-if="appStore.setting.appConfig.web_client" type="success" @click="toWebClientLink(row)">Abrir Web</el-button>
+              <el-button @click="saveRememberedPassword(row)">Salvar senha</el-button>
               <el-button @click="toEdit(row)">{{ T('Edit') }}</el-button>
               <el-button type="danger" @click="del(row)">{{ T('Delete') }}</el-button>
             </template>
@@ -98,9 +99,7 @@
         <el-form-item :label="T('Alias')" prop="alias">
           <el-input v-model="formData.alias"></el-input>
         </el-form-item>
-        <el-form-item :label="T('Hash')" prop="hash">
-          <el-input v-model="formData.hash"></el-input>
-        </el-form-item>
+        <el-form-item label="Senha salva">{{ formData.hash ? 'Sim' : 'Não' }}. Use “Salvar senha” após conectar pelo navegador.</el-form-item>
         <el-form-item :label="T('Hostname')" prop="hostname">
           <el-input v-model="formData.hostname"></el-input>
         </el-form-item>
@@ -199,6 +198,7 @@
     toEdit,
     toAdd,
     submit,
+    saveRememberedPassword,
     shareToWebClientVisible,
     shareToWebClientForm,
     toShowShare,
