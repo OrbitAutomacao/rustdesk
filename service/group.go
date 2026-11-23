@@ -73,5 +73,23 @@ func (us *GroupService) DeviceGroupDelete(u *model.DeviceGroup) error {
 }
 
 func (us *GroupService) DeviceGroupUpdate(u *model.DeviceGroup) error {
-	return DB.Model(u).Updates(u).Error
+	return DB.Model(u).Updates(map[string]interface{}{"name": u.Name, "private": u.Private, "owner_user_id": u.OwnerUserId}).Error
+}
+
+// VisibleDeviceGroups restricts private groups to the account that created them.
+func VisibleDeviceGroups(tx *gorm.DB, userId uint) {
+	tx.Where("private = ? OR owner_user_id = ?", false, userId)
+}
+
+// VisiblePeers applies the same restriction to machines assigned to private groups.
+func VisiblePeers(tx *gorm.DB, userId uint) {
+	tx.Where("NOT EXISTS (SELECT 1 FROM device_groups dg WHERE dg.id = peers.group_id AND dg.private = ? AND dg.owner_user_id <> ?)", true, userId)
+}
+
+func (us *GroupService) CanAccessDeviceGroup(id, userId uint) bool {
+	if id == 0 {
+		return true
+	}
+	group := us.DeviceGroupInfoById(id)
+	return group.Id != 0 && (!group.Private || group.OwnerUserId == userId)
 }

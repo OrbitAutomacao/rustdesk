@@ -5,6 +5,7 @@ import (
 	"github.com/lejianwen/rustdesk-api/v2/global"
 	"github.com/lejianwen/rustdesk-api/v2/http/request/admin"
 	"github.com/lejianwen/rustdesk-api/v2/http/response"
+	"github.com/lejianwen/rustdesk-api/v2/model"
 	"github.com/lejianwen/rustdesk-api/v2/service"
 	"gorm.io/gorm"
 	"strconv"
@@ -29,7 +30,8 @@ func (ct *Peer) Detail(c *gin.Context) {
 	id := c.Param("id")
 	iid, _ := strconv.Atoi(id)
 	u := service.AllService.PeerService.InfoByRowId(uint(iid))
-	if u.RowId > 0 {
+	current := service.AllService.UserService.CurUser(c)
+	if u.RowId > 0 && service.AllService.GroupService.CanAccessDeviceGroup(u.GroupId, current.Id) {
 		response.Success(c, u)
 		return
 	}
@@ -60,6 +62,11 @@ func (ct *Peer) Create(c *gin.Context) {
 		return
 	}
 	p := f.ToPeer()
+	current := service.AllService.UserService.CurUser(c)
+	if !service.AllService.GroupService.CanAccessDeviceGroup(p.GroupId, current.Id) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 	err := service.AllService.PeerService.Create(p)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -90,7 +97,9 @@ func (ct *Peer) List(c *gin.Context) {
 		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError")+err.Error())
 		return
 	}
+	current := service.AllService.UserService.CurUser(c)
 	res := service.AllService.PeerService.List(query.Page, query.PageSize, func(tx *gorm.DB) {
+		service.VisiblePeers(tx, current.Id)
 		if query.TimeAgo > 0 {
 			lt := time.Now().Unix() - int64(query.TimeAgo)
 			tx.Where("last_online_time < ?", lt)
@@ -148,6 +157,12 @@ func (ct *Peer) Update(c *gin.Context) {
 		return
 	}
 	u := f.ToPeer()
+	current := service.AllService.UserService.CurUser(c)
+	existing := service.AllService.PeerService.InfoByRowId(f.RowId)
+	if existing.RowId == 0 || !service.AllService.GroupService.CanAccessDeviceGroup(existing.GroupId, current.Id) || !service.AllService.GroupService.CanAccessDeviceGroup(u.GroupId, current.Id) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 	err := service.AllService.PeerService.Update(u)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -180,7 +195,8 @@ func (ct *Peer) Delete(c *gin.Context) {
 		return
 	}
 	u := service.AllService.PeerService.InfoByRowId(f.RowId)
-	if u.RowId > 0 {
+	current := service.AllService.UserService.CurUser(c)
+	if u.RowId > 0 && service.AllService.GroupService.CanAccessDeviceGroup(u.GroupId, current.Id) {
 		err := service.AllService.PeerService.Delete(u)
 		if err == nil {
 			response.Success(c, nil)
@@ -213,6 +229,16 @@ func (ct *Peer) BatchDelete(c *gin.Context) {
 		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError"))
 		return
 	}
+	current := service.AllService.UserService.CurUser(c)
+	var accessible int64
+	service.DB.Model(&model.Peer{}).Where("row_id in ?", f.RowIds).Scopes(func(tx *gorm.DB) *gorm.DB {
+		service.VisiblePeers(tx, current.Id)
+		return tx
+	}).Count(&accessible)
+	if accessible != int64(len(f.RowIds)) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 	err := service.AllService.PeerService.BatchDelete(f.RowIds)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -232,6 +258,7 @@ func (ct *Peer) SimpleData(c *gin.Context) {
 		return
 	}
 	res := service.AllService.PeerService.List(1, 99999, func(tx *gorm.DB) {
+		service.VisiblePeers(tx, service.AllService.UserService.CurUser(c).Id)
 		//可以公开的情报
 		tx.Select("id,version")
 		tx.Where("id in (?)", f.Ids)
