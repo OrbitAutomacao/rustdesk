@@ -31,7 +31,7 @@ func (ct *Peer) Detail(c *gin.Context) {
 	iid, _ := strconv.Atoi(id)
 	u := service.AllService.PeerService.InfoByRowId(uint(iid))
 	current := service.AllService.UserService.CurUser(c)
-	if u.RowId > 0 && service.AllService.GroupService.CanAccessUser(u.UserId, current.Id) {
+	if u.RowId > 0 && service.AllService.GroupService.CanAccessPeer(u, current.Id) {
 		response.Success(c, u)
 		return
 	}
@@ -62,7 +62,7 @@ func (ct *Peer) Create(c *gin.Context) {
 		return
 	}
 	p := f.ToPeer()
-	if !service.AllService.GroupService.CanAccessUser(p.UserId, service.AllService.UserService.CurUser(c).Id) {
+	if !service.AllService.GroupService.CanAccessPeer(p, service.AllService.UserService.CurUser(c).Id) {
 		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
 		return
 	}
@@ -98,6 +98,7 @@ func (ct *Peer) List(c *gin.Context) {
 	}
 	res := service.AllService.PeerService.List(query.Page, query.PageSize, func(tx *gorm.DB) {
 		service.VisibleGroupPeers(tx, service.AllService.UserService.CurUser(c).Id)
+		service.VisibleDevicePeers(tx, service.AllService.UserService.CurUser(c).Id)
 		if query.TimeAgo > 0 {
 			lt := time.Now().Unix() - int64(query.TimeAgo)
 			tx.Where("last_online_time < ?", lt)
@@ -157,7 +158,7 @@ func (ct *Peer) Update(c *gin.Context) {
 	u := f.ToPeer()
 	current := service.AllService.UserService.CurUser(c)
 	existing := service.AllService.PeerService.InfoByRowId(f.RowId)
-	if existing.RowId == 0 || !service.AllService.GroupService.CanAccessUser(existing.UserId, current.Id) || !service.AllService.GroupService.CanAccessUser(u.UserId, current.Id) {
+	if existing.RowId == 0 || !service.AllService.GroupService.CanAccessPeer(existing, current.Id) || !service.AllService.GroupService.CanAccessPeer(u, current.Id) {
 		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
 		return
 	}
@@ -194,7 +195,7 @@ func (ct *Peer) Delete(c *gin.Context) {
 	}
 	u := service.AllService.PeerService.InfoByRowId(f.RowId)
 	current := service.AllService.UserService.CurUser(c)
-	if u.RowId > 0 && service.AllService.GroupService.CanAccessUser(u.UserId, current.Id) {
+	if u.RowId > 0 && service.AllService.GroupService.CanAccessPeer(u, current.Id) {
 		err := service.AllService.PeerService.Delete(u)
 		if err == nil {
 			response.Success(c, nil)
@@ -229,7 +230,7 @@ func (ct *Peer) BatchDelete(c *gin.Context) {
 	}
 	var visible int64
 	viewer := service.AllService.UserService.CurUser(c)
-	service.DB.Model(&model.Peer{}).Where("row_id in ?", f.RowIds).Scopes(func(tx *gorm.DB) *gorm.DB { service.VisibleGroupPeers(tx, viewer.Id); return tx }).Count(&visible)
+	service.DB.Model(&model.Peer{}).Where("row_id in ?", f.RowIds).Scopes(func(tx *gorm.DB) *gorm.DB { service.VisibleGroupPeers(tx, viewer.Id); service.VisibleDevicePeers(tx, viewer.Id); return tx }).Count(&visible)
 	if visible != int64(len(f.RowIds)) {
 		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
 		return
@@ -254,6 +255,7 @@ func (ct *Peer) SimpleData(c *gin.Context) {
 	}
 	res := service.AllService.PeerService.List(1, 99999, func(tx *gorm.DB) {
 		service.VisibleGroupPeers(tx, service.AllService.UserService.CurUser(c).Id)
+		service.VisibleDevicePeers(tx, service.AllService.UserService.CurUser(c).Id)
 		//可以公开的情报
 		tx.Select("id,version")
 		tx.Where("id in (?)", f.Ids)

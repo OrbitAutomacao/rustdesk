@@ -7,6 +7,7 @@ import (
 	apiResp "github.com/lejianwen/rustdesk-api/v2/http/response/api"
 	"github.com/lejianwen/rustdesk-api/v2/model"
 	"github.com/lejianwen/rustdesk-api/v2/service"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -95,11 +96,16 @@ func (g *Group) Peers(c *gin.Context) {
 		userIds = append(userIds, user.Id)
 	}
 	dGroupNameById := make(map[uint]string)
-	allGroup := service.AllService.GroupService.DeviceGroupList(1, 999, nil)
+	allGroup := service.AllService.GroupService.DeviceGroupList(1, 999, func(tx *gorm.DB) {
+		service.VisibleDeviceGroups(tx, u.Id)
+	})
 	for _, group := range allGroup.DeviceGroups {
 		dGroupNameById[group.Id] = group.Name
 	}
-	peerList := service.AllService.PeerService.ListByUserIds(userIds, q.Page, q.PageSize)
+	peerList := service.AllService.PeerService.List(q.Page, q.PageSize, func(tx *gorm.DB) {
+		tx.Where("user_id in ?", userIds)
+		service.VisibleDevicePeers(tx, u.Id)
+	})
 	data := make([]*apiResp.GroupPeerPayload, 0, len(peerList.Peers))
 	for _, peer := range peerList.Peers {
 		uname, ok := namesById[peer.UserId]
@@ -141,7 +147,9 @@ func (g *Group) Device(c *gin.Context) {
 		response.Error(c, "Permission denied")
 		return
 	}
-	allGroup := service.AllService.GroupService.DeviceGroupList(1, 999, nil)
+	allGroup := service.AllService.GroupService.DeviceGroupList(1, 999, func(tx *gorm.DB) {
+		service.VisibleDeviceGroups(tx, u.Id)
+	})
 
 	c.JSON(http.StatusOK, response.DataResponse{
 		Total: 0,

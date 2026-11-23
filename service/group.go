@@ -55,6 +55,19 @@ func VisibleGroupPeers(tx *gorm.DB, userId uint) {
 	tx.Where("NOT EXISTS (SELECT 1 FROM users u JOIN groups g ON g.id = u.group_id WHERE u.id = peers.user_id AND g.private = ? AND g.owner_user_id <> ?)", true, userId)
 }
 
+func VisibleDevicePeers(tx *gorm.DB, userId uint) {
+	tx.Where("NOT EXISTS (SELECT 1 FROM device_groups dg WHERE dg.id = peers.group_id AND dg.private = ? AND dg.owner_user_id <> ?)", true, userId)
+}
+
+func VisibleAddressBooks(tx *gorm.DB, userId uint) {
+	tx.Where("NOT EXISTS (SELECT 1 FROM peers p JOIN device_groups dg ON dg.id = p.group_id WHERE p.id = address_books.id AND dg.private = ? AND dg.owner_user_id <> ?)", true, userId)
+	tx.Where("NOT EXISTS (SELECT 1 FROM peers p JOIN users u ON u.id = p.user_id JOIN groups g ON g.id = u.group_id WHERE p.id = address_books.id AND g.private = ? AND g.owner_user_id <> ?)", true, userId)
+}
+
+func VisibleDeviceGroups(tx *gorm.DB, userId uint) {
+	tx.Where("private = ? OR owner_user_id = ?", false, userId)
+}
+
 func (us *GroupService) CanAccessGroup(id, userId uint) bool {
 	group := us.InfoById(id)
 	return group.Id != 0 && (!group.Private || group.OwnerUserId == userId)
@@ -64,6 +77,25 @@ func (us *GroupService) CanAccessUser(targetId, viewerId uint) bool {
 	if targetId == 0 { return true }
 	target := AllService.UserService.InfoById(targetId)
 	return target.Id != 0 && us.CanAccessGroup(target.GroupId, viewerId)
+}
+
+func (us *GroupService) CanAccessDeviceGroup(id, userId uint) bool {
+	if id == 0 { return true }
+	group := us.DeviceGroupInfoById(id)
+	return group.Id != 0 && (!group.Private || group.OwnerUserId == userId)
+}
+
+func (us *GroupService) CanAccessPeer(peer *model.Peer, viewerId uint) bool {
+	return us.CanAccessUser(peer.UserId, viewerId) && us.CanAccessDeviceGroup(peer.GroupId, viewerId)
+}
+
+func (us *GroupService) CanAccessRemoteId(id string, viewerId uint) bool {
+	var peers []*model.Peer
+	DB.Where("id = ?", id).Find(&peers)
+	for _, peer := range peers {
+		if !us.CanAccessPeer(peer, viewerId) { return false }
+	}
+	return true
 }
 
 // DeviceGroupInfoById 根据用户id取用户信息
@@ -96,5 +128,5 @@ func (us *GroupService) DeviceGroupDelete(u *model.DeviceGroup) error {
 }
 
 func (us *GroupService) DeviceGroupUpdate(u *model.DeviceGroup) error {
-	return DB.Model(u).Updates(u).Error
+	return DB.Model(u).Updates(map[string]interface{}{"name": u.Name, "private": u.Private, "owner_user_id": u.OwnerUserId}).Error
 }

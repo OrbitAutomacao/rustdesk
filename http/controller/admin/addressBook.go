@@ -30,7 +30,7 @@ func (ct *AddressBook) Detail(c *gin.Context) {
 	id := c.Param("id")
 	iid, _ := strconv.Atoi(id)
 	t := service.AllService.AddressBookService.InfoByRowId(uint(iid))
-	if t.RowId > 0 {
+	if t.RowId > 0 && service.AllService.GroupService.CanAccessRemoteId(t.Id, service.AllService.UserService.CurUser(c).Id) {
 		response.Success(c, t)
 		return
 	}
@@ -61,6 +61,10 @@ func (ct *AddressBook) Create(c *gin.Context) {
 		return
 	}
 	t := f.ToAddressBook()
+	if !service.AllService.GroupService.CanAccessRemoteId(t.Id, service.AllService.UserService.CurUser(c).Id) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 	if t.UserId == 0 {
 		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError"))
 		return
@@ -107,6 +111,10 @@ func (ct *AddressBook) BatchCreate(c *gin.Context) {
 		return
 	}
 	ul := len(f.UserIds)
+	if !service.AllService.GroupService.CanAccessRemoteId(f.Id, service.AllService.UserService.CurUser(c).Id) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 
 	if ul == 0 {
 		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError"))
@@ -169,6 +177,7 @@ func (ct *AddressBook) List(c *gin.Context) {
 		return
 	}
 	res := service.AllService.AddressBookService.List(query.Page, query.PageSize, func(tx *gorm.DB) {
+		service.VisibleAddressBooks(tx, service.AllService.UserService.CurUser(c).Id)
 		tx.Preload("Collection", func(txc *gorm.DB) *gorm.DB {
 			return txc.Select("id,name")
 		})
@@ -223,7 +232,8 @@ func (ct *AddressBook) Update(c *gin.Context) {
 		return
 	}
 	ex := service.AllService.AddressBookService.InfoByRowId(f.RowId)
-	if ex.RowId == 0 {
+	current := service.AllService.UserService.CurUser(c)
+	if ex.RowId == 0 || !service.AllService.GroupService.CanAccessRemoteId(ex.Id, current.Id) || !service.AllService.GroupService.CanAccessRemoteId(f.Id, current.Id) {
 		response.Fail(c, 101, response.TranslateMsg(c, "ItemNotFound"))
 		return
 	}
@@ -264,7 +274,7 @@ func (ct *AddressBook) Delete(c *gin.Context) {
 		return
 	}
 	t := service.AllService.AddressBookService.InfoByRowId(f.RowId)
-	if t.RowId == 0 {
+	if t.RowId == 0 || !service.AllService.GroupService.CanAccessRemoteId(t.Id, service.AllService.UserService.CurUser(c).Id) {
 		response.Fail(c, 101, response.TranslateMsg(c, "ItemNotFound"))
 		return
 	}
@@ -340,6 +350,8 @@ func (ct *AddressBook) BatchCreateFromPeers(c *gin.Context) {
 	pl := int64(len(f.PeerIds))
 	peers := service.AllService.PeerService.List(1, uint(pl), func(tx *gorm.DB) {
 		tx.Where("row_id in ?", f.PeerIds)
+		service.VisibleGroupPeers(tx, service.AllService.UserService.CurUser(c).Id)
+		service.VisibleDevicePeers(tx, service.AllService.UserService.CurUser(c).Id)
 	})
 	if peers.Total == 0 || pl != peers.Total {
 		response.Fail(c, 101, response.TranslateMsg(c, "ItemNotFound"))

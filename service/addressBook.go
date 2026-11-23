@@ -182,6 +182,7 @@ func (s *AddressBookService) PlatformFromOs(os string) string {
 func (s *AddressBookService) ListByUserIdAndCollectionId(userId, cid, page, pageSize uint) (res *model.AddressBookList) {
 	res = s.List(page, pageSize, func(tx *gorm.DB) {
 		tx.Where("user_id = ? and collection_id = ?", userId, cid)
+		VisibleAddressBooks(tx, userId)
 	})
 	return
 }

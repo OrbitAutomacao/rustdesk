@@ -22,6 +22,8 @@ type GroupList struct {
 type DeviceGroup struct {
 	IdModel
 	Name string `json:"name" gorm:"default:'';not null;"`
+	Private bool `json:"private" gorm:"default:false;not null;index"`
+	OwnerUserId uint `json:"owner_user_id" gorm:"default:0;not null;index"`
 	TimeModel
 }
 
