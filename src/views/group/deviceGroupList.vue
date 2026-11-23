@@ -15,6 +15,9 @@
       <el-table v-responsive-table class="responsive-data-table" :data="listRes.list" v-loading="listRes.loading" border>
         <el-table-column prop="id" label="ID" align="center"></el-table-column>
         <el-table-column prop="name" :label="T('Name')" align="center"/>
+        <el-table-column label="Visibilidade" align="center">
+          <template #default="{ row }">{{ row.private ? 'Somente eu' : 'Todos os administradores' }}</template>
+        </el-table-column>
         <el-table-column prop="created_at" :label="T('CreatedAt')" align="center"/>
         <el-table-column prop="updated_at" :label="T('UpdatedAt')" align="center"/>
         <el-table-column :label="T('Actions')" align="center">
@@ -38,6 +41,9 @@
       <el-form class="dialog-form" ref="form" :model="formData" label-width="120px">
         <el-form-item :label="T('Name')" prop="name" required>
           <el-input v-model="formData.name"></el-input>
+        </el-form-item>
+        <el-form-item label="Visibilidade">
+          <el-switch v-model="formData.private" active-text="Somente eu" inactive-text="Todos os administradores" />
         </el-form-item>
         <el-form-item>
           <el-button @click="formVisible = false">{{ T('Cancel') }}</el-button>
@@ -106,20 +112,20 @@
   const formData = reactive({
     id: 0,
     name: '',
-    type: 1,
+    private: false,
   })
 
   const toEdit = (row) => {
     formVisible.value = true
     formData.id = row.id
     formData.name = row.name
-    formData.type = row.type
+    formData.private = row.private
   }
   const toAdd = () => {
     formVisible.value = true
     formData.id = 0
     formData.name = ''
-    formData.type = 1
+    formData.private = false
   }
   const submit = async () => {
     const api = formData.id ? update : create
