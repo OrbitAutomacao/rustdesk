@@ -31,7 +31,8 @@ func (ct *User) Detail(c *gin.Context) {
 	id := c.Param("id")
 	iid, _ := strconv.Atoi(id)
 	u := service.AllService.UserService.InfoById(uint(iid))
-	if u.Id > 0 {
+	current := service.AllService.UserService.CurUser(c)
+	if u.Id > 0 && service.AllService.GroupService.CanAccessGroup(u.GroupId, current.Id) {
 		response.Success(c, u)
 		return
 	}
@@ -62,6 +63,11 @@ func (ct *User) Create(c *gin.Context) {
 		return
 	}
 	u := f.ToUser()
+	current := service.AllService.UserService.CurUser(c)
+	if !service.AllService.GroupService.CanAccessGroup(u.GroupId, current.Id) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 	if len(f.Password) < 4 || len(f.Password) > 32 {
 		response.Fail(c, 101, response.TranslateMsg(c, "ParamsError"))
 		return
@@ -95,6 +101,7 @@ func (ct *User) List(c *gin.Context) {
 		return
 	}
 	res := service.AllService.UserService.List(query.Page, query.PageSize, func(tx *gorm.DB) {
+		service.VisibleUsers(tx, service.AllService.UserService.CurUser(c).Id)
 		if query.Username != "" {
 			tx.Where("username like ?", "%"+query.Username+"%")
 		}
@@ -129,6 +136,12 @@ func (ct *User) Update(c *gin.Context) {
 		return
 	}
 	u := f.ToUser()
+	current := service.AllService.UserService.CurUser(c)
+	existing := service.AllService.UserService.InfoById(f.Id)
+	if existing.Id == 0 || !service.AllService.GroupService.CanAccessGroup(existing.GroupId, current.Id) || !service.AllService.GroupService.CanAccessGroup(u.GroupId, current.Id) || (existing.IsMaster && existing.Id != current.Id) {
+		response.Fail(c, 403, response.TranslateMsg(c, "NoAccess"))
+		return
+	}
 	err := service.AllService.UserService.Update(u)
 	if err != nil {
 		response.Fail(c, 101, response.TranslateMsg(c, "OperationFailed")+err.Error())
@@ -161,7 +174,8 @@ func (ct *User) Delete(c *gin.Context) {
 		return
 	}
 	u := service.AllService.UserService.InfoById(f.Id)
-	if u.Id > 0 {
+	current := service.AllService.UserService.CurUser(c)
+	if u.Id > 0 && service.AllService.GroupService.CanAccessGroup(u.GroupId, current.Id) && (!u.IsMaster || u.Id == current.Id) {
 		err := service.AllService.UserService.Delete(u)
 		if err == nil {
 			response.Success(c, nil)
@@ -196,7 +210,8 @@ func (ct *User) UpdatePassword(c *gin.Context) {
 		return
 	}
 	u := service.AllService.UserService.InfoById(f.Id)
-	if u.Id == 0 {
+	current := service.AllService.UserService.CurUser(c)
+	if u.Id == 0 || !service.AllService.GroupService.CanAccessGroup(u.GroupId, current.Id) || (u.IsMaster && u.Id != current.Id) {
 		response.Fail(c, 101, response.TranslateMsg(c, "ItemNotFound"))
 		return
 	}
@@ -301,8 +316,9 @@ func (ct *User) MyOauth(c *gin.Context) {
 
 // groupUsers
 func (ct *User) GroupUsers(c *gin.Context) {
-	aG := service.AllService.GroupService.List(1, 999, nil)
-	aU := service.AllService.UserService.List(1, 9999, nil)
+	current := service.AllService.UserService.CurUser(c)
+	aG := service.AllService.GroupService.List(1, 999, func(tx *gorm.DB) { service.VisibleGroups(tx, current.Id) })
+	aU := service.AllService.UserService.List(1, 9999, func(tx *gorm.DB) { service.VisibleUsers(tx, current.Id) })
 	response.Success(c, gin.H{
 		"groups": aG.Groups,
 		"users":  aU.Users,

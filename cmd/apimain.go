@@ -310,6 +310,8 @@ func Migrate(version uint) {
 	if err != nil {
 		global.Logger.Error("migrate err :=>", err)
 	}
+	// Keep the original administrator as the only master account after upgrading.
+	global.DB.Model(&model.User{}).Where("username = ?", "admin").Update("is_master", true)
 	global.DB.Create(&model.Version{Version: version})
 	//如果是初次则创建一个默认用户
 	var vc int64
@@ -340,6 +342,7 @@ func Migrate(version uint) {
 			Nickname: "Admin",
 			Status:   model.COMMON_STATUS_ENABLE,
 			IsAdmin:  &is_admin,
+			IsMaster: true,
 			GroupId:  1,
 		}
 

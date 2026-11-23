@@ -6,6 +6,7 @@ type GroupForm struct {
 	Id   uint   `json:"id"`
 	Name string `json:"name" validate:"required"`
 	Type int    `json:"type"`
+	Private bool `json:"private"`
 }
 
 func (gf *GroupForm) FromGroup(group *model.Group) *GroupForm {
@@ -20,6 +21,7 @@ func (gf *GroupForm) ToGroup() *model.Group {
 	group.Id = gf.Id
 	group.Name = gf.Name
 	group.Type = gf.Type
+	group.Private = gf.Private
 	return group
 }
 

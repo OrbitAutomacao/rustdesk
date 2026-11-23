@@ -40,7 +40,30 @@ func (us *GroupService) Delete(u *model.Group) error {
 
 // Update 更新
 func (us *GroupService) Update(u *model.Group) error {
-	return DB.Model(u).Updates(u).Error
+	return DB.Model(u).Updates(map[string]interface{}{"name": u.Name, "type": u.Type, "private": u.Private, "owner_user_id": u.OwnerUserId}).Error
+}
+
+func VisibleGroups(tx *gorm.DB, userId uint) {
+	tx.Where("private = ? OR owner_user_id = ?", false, userId)
+}
+
+func VisibleUsers(tx *gorm.DB, userId uint) {
+	tx.Where("NOT EXISTS (SELECT 1 FROM groups g WHERE g.id = users.group_id AND g.private = ? AND g.owner_user_id <> ?)", true, userId)
+}
+
+func VisibleGroupPeers(tx *gorm.DB, userId uint) {
+	tx.Where("NOT EXISTS (SELECT 1 FROM users u JOIN groups g ON g.id = u.group_id WHERE u.id = peers.user_id AND g.private = ? AND g.owner_user_id <> ?)", true, userId)
+}
+
+func (us *GroupService) CanAccessGroup(id, userId uint) bool {
+	group := us.InfoById(id)
+	return group.Id != 0 && (!group.Private || group.OwnerUserId == userId)
+}
+
+func (us *GroupService) CanAccessUser(targetId, viewerId uint) bool {
+	if targetId == 0 { return true }
+	target := AllService.UserService.InfoById(targetId)
+	return target.Id != 0 && us.CanAccessGroup(target.GroupId, viewerId)
 }
 
 // DeviceGroupInfoById 根据用户id取用户信息

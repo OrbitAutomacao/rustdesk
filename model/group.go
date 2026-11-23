@@ -9,6 +9,8 @@ type Group struct {
 	IdModel
 	Name string `json:"name" gorm:"default:'';not null;"`
 	Type int    `json:"type" gorm:"default:1;not null;"`
+	Private bool `json:"private" gorm:"default:false;not null;index"`
+	OwnerUserId uint `json:"owner_user_id" gorm:"default:0;not null;index"`
 	TimeModel
 }
 
